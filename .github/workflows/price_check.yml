@@ -9,6 +9,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    # ----------------------------------------------------
+    # ▼▼▼ 이 한 줄이 해결책입니다! ▼▼▼
+    # ----------------------------------------------------
+    permissions: contents: write
+    # ----------------------------------------------------
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,7 +35,6 @@ jobs:
           sudo apt-get install -y google-chrome-stable
 
       - name: Run Price Hunter Script (v2.5)
-        # v2.5 스크립트 실행 (파일 이름이 다르면 이 부분을 수정하세요)
         run: python deal_hunter_v2.5.py 
 
       - name: Commit and push if files changed
@@ -38,22 +43,16 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add last_prices.json
           
-          # 기본 커밋 메시지 설정
           COMMIT_MSG="Update last_prices.json (정상 실행)"
           
-          # 'alert.log' 파일이 생성되었다면 (즉, 가격 변동이 감지됨)
           if [ -f alert.log ]; then
-            # 커밋 메시지를 'alert.log' 파일의 내용으로 변경
             COMMIT_MSG=$(cat alert.log)
-            # 다음 실행을 위해 'alert.log' 파일은 삭제 (저장소에 남기지 않음)
             rm alert.log
           fi
           
-          # last_prices.json 파일이 변경되었는지 확인
           if git diff --staged --quiet; then
             echo "가격 변동 없음. 커밋하지 않습니다."
           else
-            # 동적으로 설정된 COMMIT_MSG를 사용
             git commit -m "$COMMIT_MSG"
             git push
           fi
