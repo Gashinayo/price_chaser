@@ -3,7 +3,7 @@
     "id": "ccdak_naver",
     "name": "CCDak 닭갈비 (네이버)",
     "url": "https://brand.naver.com/ccdakgalbi/products/10119281365",
-    "target_price": 15000,
+    "target_price": 55000,
     "css_selector": "span.product_price__2N-Kl",
     "stock_keyword": "품절"
   },
@@ -11,7 +11,7 @@
     "id": "coupang_dak",
     "name": "강명희 닭다리살 (쿠팡)",
     "url": "https://www.coupang.com/vp/products/9060995451",
-    "target_price": 14000,
+    "target_price": 34000,
     "css_selector": "span.total-price",
     "stock_keyword": "품절"
   }
