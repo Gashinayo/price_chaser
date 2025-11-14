@@ -1,0 +1,31 @@
+[
+  {
+    "id": "item001",
+    "name": "샘플 상품 A (네이버쇼핑)",
+    "url": "https://search.shopping.naver.com/catalog/...",
+    "target_price": 50000,
+    "css_selector": "div.price_num__S2p_v > span.price_price__mXUfC",
+    "stock_keyword": "품절"
+  },
+  {
+    "id": "item002",
+    "name": "샘플 상품 B (아마존)",
+    "url": "https://www.amazon.com/dp/...",
+    "target_price": 100.0,
+    "css_selector": "span.a-price-whole",
+    "stock_keyword": "Currently unavailable"
+  }
+]
+css_selector: 웹페이지에서 가격 정보가 어디(HTML 태그)에 있는지 알려주는 '주소'입니다. (이 부분이 사이트마다 달라지는 핵심입니다.)
+
+stock_keyword: 이 단어가 페이지에 나타나면 '품절'로 간주합니다.
+
+2. 상태 파일 (last_prices.json)
+스크립트가 자동으로 생성하고 관리하는 파일입니다. (사용자가 건드리지 않음)
+
+JSON
+
+{
+  "item001": 55000,
+  "item002": 110.50
+}
