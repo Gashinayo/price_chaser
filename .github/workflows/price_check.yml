@@ -1,56 +1,59 @@
 name: Run Price Hunter
 
-# 이 명령서를 언제 실행할지 정합니다.
 on:
-  # 1. 1시간마다 자동으로 실행 (cron 스케줄)
   schedule:
     - cron: '0 * * * *' # 매시 정각에 실행
-
-  # 2. GitHub에서 'Actions' 탭을 눌러 수동으로 실행할 수도 있게 함
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest # 리눅스 '봇' 컴퓨터에서 실행
+    runs-on: ubuntu-latest
 
     steps:
-      # 1. 내 저장소의 코드를 '봇' 컴퓨터로 가져오기 (Checkout)
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Python 3.11 버전 설치하기
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # 3. 필요한 라이브러리 설치하기 (requirements.txt 이용)
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4. (중요) Selenium이 Linux 봇에서 작동하도록 Chrome 설치하기
       - name: Install Google Chrome
         run: |
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
 
-      # 5. 핵심 스크립트 실행하기
-      - name: Run Price Hunter Script
-        run: python deal_hunter_v2.0.py
+      - name: Run Price Hunter Script (v2.5)
+        # v2.5 스크립트 실행 (파일 이름이 다르면 이 부분을 수정하세요)
+        run: python deal_hunter_v2.5.py 
 
-      # 6. (가장 중요) 변경된 'last_prices.json' 파일을 저장소에 다시 커밋하기
       - name: Commit and push if files changed
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add last_prices.json config.json
-
-          # 파일이 변경되었을 때만 커밋
+          git add last_prices.json
+          
+          # 기본 커밋 메시지 설정
+          COMMIT_MSG="Update last_prices.json (정상 실행)"
+          
+          # 'alert.log' 파일이 생성되었다면 (즉, 가격 변동이 감지됨)
+          if [ -f alert.log ]; then
+            # 커밋 메시지를 'alert.log' 파일의 내용으로 변경
+            COMMIT_MSG=$(cat alert.log)
+            # 다음 실행을 위해 'alert.log' 파일은 삭제 (저장소에 남기지 않음)
+            rm alert.log
+          fi
+          
+          # last_prices.json 파일이 변경되었는지 확인
           if git diff --staged --quiet; then
-            echo "No changes to commit."
+            echo "가격 변동 없음. 커밋하지 않습니다."
           else
-            git commit -m "Update last_prices.json"
+            # 동적으로 설정된 COMMIT_MSG를 사용
+            git commit -m "$COMMIT_MSG"
             git push
           fi
